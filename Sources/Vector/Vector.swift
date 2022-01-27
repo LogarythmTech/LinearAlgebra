@@ -114,6 +114,7 @@ extension Vector {
         return Vector(dimensions: 2)
     }
     
+    //MARK: Static
     public static var zero: Vector<Scalar> {
         return Vector(dimensions: 2)
     }

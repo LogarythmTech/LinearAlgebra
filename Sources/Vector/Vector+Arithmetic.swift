@@ -8,18 +8,32 @@
 // See https://github.com/Logarithm-1/MATH/blob/main/LICENSE for license information
 
 extension Vector {
+    /// Replaces the values in the matrix with its additive inverse.
     public mutating func negate() {
         for i in 0..<dimensions {
-            self[i] *= -1
+            self[i].negate()
         }
     }
     
+    /// Returns the additive inverse of the specified value.
+    ///
+    /// The negation operator (prefix `-`) returns the additive inverse of its
+    /// argument.
+    ///
+    ///     let x = [1, -3, 2]
+    ///     let y = -x
+    ///     // y == -[1, -3, 2] == [-1, 3, -2]
+    ///
+    /// - Returns: The additive inverse of the argument.
     prefix public static func -(operand: Vector) -> Vector {
         var result = operand
         result.negate()
         return result
     }
     
+    /// Returns the given number unchanged.
+    ///
+    /// - Returns: The given argument without any changes.
     prefix public static func +(operand: Vector) -> Vector {
         return operand
     }
@@ -91,7 +105,7 @@ extension Vector: AdditiveArithmetic {
 }
 
 extension Vector {
-    //MARK: Multiplication
+    //MARK: - Multiplication
     public func scale(by scalar: Scalar) -> Vector<Scalar> {
         return self * scalar
     }
