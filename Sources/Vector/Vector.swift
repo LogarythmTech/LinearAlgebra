@@ -7,11 +7,7 @@
 //
 // See https://github.com/Logarithm-1/MATH/blob/main/LICENSE for license information
 
-//TODO: Theta (for 2D)
-
 //TODO: Vector Function?
-
-//TODO: Create Scalar Protocol the has both integers and floating points in it.
 
 /// A `Vector` is a mathematical way to discribe both a magnitude and a direction.
 public struct Vector<Scalar: FloatingPoint> {
