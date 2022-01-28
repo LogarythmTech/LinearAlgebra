@@ -1,4 +1,4 @@
-// Scalar.swift
+// Matrix+ExpressibleBy.swift
 //
 // This source file is part of the Swift Math open source project.
 //
@@ -7,4 +7,10 @@
 //
 // See https://github.com/Logarithm-1/LinearAlgebra/blob/main/LICENSE for license information
 
-public protocol Scalar: FloatingPoint {}
+extension Matrix: ExpressibleByArrayLiteral {
+    public typealias ArrayLiteralElement = [Scalar]
+    
+    public init(arrayLiteral elements: [Scalar]...) {
+        self.init(elements)
+    }
+}

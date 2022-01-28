@@ -11,7 +11,16 @@ import XCTest
 @testable import Matrix
 
 final class BasicTests: XCTestCase {
- 
+    func testExpressibleBy() {
+        let matrix: Matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+        XCTAssertEqual(matrix.rows, 3)
+    }
+    
+    func testToString() {
+        let matrix: Matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9], [0, 1, 2]]
+        print(matrix)
+    }
+    
     func testGetMatrix() {
         let matrix: Matrix<Double> = Matrix<Double>([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
         XCTAssertEqual(matrix[0, 0], 1.0)

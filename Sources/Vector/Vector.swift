@@ -5,7 +5,7 @@
 // Copyright (c) 2022 Logan Richards and the Swift Math project authors.
 // Licensed under MIT
 //
-// See https://github.com/Logarithm-1/MATH/blob/main/LICENSE for license information
+// See https://github.com/Logarithm-1/LinearAlgebra/blob/main/LICENSE for license information
 
 //TODO: Vector Function?
 
@@ -74,6 +74,10 @@ extension Vector {
     }
     
     /// The magnitude of the vector squared.
+    ///
+    ///     ⟨1, 2, 3⟩.magnitude        = √(1^2 + 2^2 + 3^2)
+    ///     ⟨1, 2, 3⟩.magnitudeSquared = (1^2 + 2^2 + 3^2)
+    ///
     public var magnitudeSquared: Scalar {
         var sum: Scalar = 0
         
@@ -86,7 +90,9 @@ extension Vector {
     
     /// The magnitude of the vector
     ///
-    ///     |<2, 2>| = (2^2 + 2^2)^0.5
+    ///     ⟨1, 2, 3⟩.magnitudeSquared = (1^2 + 2^2 + 3^2)
+    ///     ⟨1, 2, 3⟩.magnitude        = √(1^2 + 2^2 + 3^2)
+    ///                                = ⟨1, 2, 3⟩.magnitudeSquared.squareRoot()
     public var magnitude: Scalar {
         return magnitudeSquared.squareRoot()
     }
@@ -96,10 +102,18 @@ extension Vector {
         return unitVector
     }
     
-    /// The direction of the vector in terms of angle from orgin. _Only for 2D Vectors._.
-    /// - Requires `compactDimensions == 2`
+    /// The angle of the vector in the (`x`, `y`) plane from orgin. Typically represented by θ.
     public var theta: Scalar {
         //return atan(y / x)
+        //TODO: Trig Functions
+        return 0
+    }
+    
+    
+    /// The angle of the vector between the (`x`, `y`) plane and the `z` axis. Typically represented by 𝛗.
+    public var phi: Scalar {
+        //return atan(z / √(x^2 + y^2))
+        //TODO: Trig Functions
         return 0
     }
     
@@ -115,6 +129,7 @@ extension Vector {
     }
     
     //MARK: Static
+    /// Equates to a vector `<0, 0>`
     public static var zero: Vector<Scalar> {
         return Vector(dimensions: 2)
     }
@@ -136,7 +151,46 @@ extension Vector {
         }
     }
     
-    /// The `x` component (or the first element) in the `Vector`.
+    /// `{get set}` a subset of components in the `Vector`.
+    public subscript(indices: Range<Int>) -> Vector<Scalar> {
+        get {
+            var results: [Scalar] = [Scalar]()
+            
+            for index in indices {
+                results.append(self[index])
+            }
+            
+            return Vector<Scalar>(results)
+        } set(newValue) {
+            precondition(newValue.dimensions == indices.count, "The new value must have the same number of components (dimensions) as the given range.")
+            
+            for index in indices {
+                self[index] = newValue[index - indices.lowerBound]
+            }
+        }
+    }
+    
+    /// `{get set}` a subset of components in the `Vector`.
+    public subscript(indices: ClosedRange<Int>) -> Vector<Scalar> {
+        get { return self[indices.lowerBound..<(indices.upperBound + 1)] } set(newValue) { self[indices.lowerBound..<(indices.upperBound + 1)] = newValue }
+    }
+    
+    /// `{get set}` a subset of components in the `Vector`.
+    public subscript(indices: PartialRangeThrough<Int>) -> Vector<Scalar> {
+        get { return self[0...indices.upperBound] } set(newValue) { self[0...indices.upperBound] = newValue }
+    }
+    
+    /// `{get set}` a subset of components in the `Vector`.
+    public subscript(indices: PartialRangeUpTo<Int>) -> Vector<Scalar> {
+        get { return self[0..<indices.upperBound] } set(newValue) { self[0..<indices.upperBound] = newValue }
+    }
+    
+    /// `{get set}` a subset of components in the `Vector`.
+    public subscript(indices: PartialRangeFrom<Int>) -> Vector<Scalar> {
+        get { return self[indices.lowerBound..<dimensions] } set(newValue) { self[indices.lowerBound..<dimensions] = newValue }
+    }
+    
+    /// `{get set}` the `x` component (or the first element) in the `Vector`.
     public var x: Scalar {
         get {
             return self[0]
@@ -145,7 +199,7 @@ extension Vector {
         }
     }
     
-    /// The `y` component (or the second element) in the `Vector`.
+    /// `{get set}` the  `y` component (or the second element) in the `Vector`.
     public var y: Scalar {
         get {
             return self[1]
@@ -154,7 +208,7 @@ extension Vector {
         }
     }
     
-    /// The `Z` component (or the third element) in the `Vector`.
+    /// `{get set}` the  `Z` component (or the third element) in the `Vector`.
     public var z: Scalar {
         get {
             return self[2]
@@ -163,7 +217,7 @@ extension Vector {
         }
     }
     
-    /// The `w` component (or the fourth element) in the `Vector`.
+    /// `{get set}` the `w` component (or the fourth element) in the `Vector`.
     public var w: Scalar {
         get {
             return self[3]
