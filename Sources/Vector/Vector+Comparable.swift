@@ -17,6 +17,18 @@ extension Vector: Equatable {
         
         return true
     }
+    
+    public static func ==(lhs: Vector, rhs: S) -> Bool {
+        return lhs.magnitudeSquared == (rhs*rhs)
+    }
+    
+    public static func ==(lhs: S, rhs: Vector) -> Bool {
+        return (lhs*lhs) == rhs.magnitudeSquared
+    }
 }
 
-//TODO: Should we do comparable, what whould that look like (magnitude vs. magnitude)?
+extension Vector: Comparable {
+    public static func < (lhs: Vector<S>, rhs: Vector<S>) -> Bool {
+        return lhs.magnitudeSquared < rhs.magnitudeSquared
+    }
+}

@@ -19,17 +19,16 @@ extension Vector {
     ///
     /// - Parameter other: The other vector to compare `self` with.
     /// - Returns: `true` if `self` and `other` are parallel.
-    public func isParallel(to other: Vector<Scalar>) -> Bool {
-        let cross: Vector<Scalar> = self +* other
-        return false //FIXME: cross == 0 !! Allow Vector Equatable with scalar
+    public func isParallel(to other: Vector<S>) -> Bool {
+        let cross: Vector<S> = self +* other
+        return cross == 0
     }
     
     //TODO: Anit-Parallel
-    public func isAntiParallel(to other: Vector<Scalar>) -> Bool {
+    public func isAntiParallel(to other: Vector<S>) -> Bool {
         return false
     }
     
-    //TODO: Return a parallel Vector (s) to `self`
     
     //MARK: - Orthogonal
     /// Determines if `self` and `other` are orthogonal (perpendicular) to each other.
@@ -38,8 +37,8 @@ extension Vector {
     ///
     /// - Parameter other: The other vector to compare `self` with.
     /// - Returns: `true` is `self` and `other` are orthogonal.
-    public func isOrthogonal(to other: Vector<Scalar>) -> Bool {
-        let dot: Scalar = self •* other
+    public func isOrthogonal(to other: Vector<S>) -> Bool {
+        let dot: S = self •* other
         return dot == 0
     }
     
@@ -52,7 +51,14 @@ extension Vector {
     //MARK: - Plane
     //TODO: `self` lies on Plane
 
-    //MARK: Parelogram
-    //TODO: Area of parrelogram -> |a⨯b|
-    //TODO: Volume of parrelogram -> |(a⨯b)•c|
+    //MARK: - Parelogram
+    /// The area of a parreleogram created by the two vectors `self` and `other`.
+    public func areaOfParrelogram(with other: Vector<S>) -> S {
+        return (self +* other).magnitude
+    }
+    
+    /// The Volume of a parrelogram created by three vectors `self`, `a`, and `b`.
+    public func volumeOfParrelogram(with a: Vector<S>, _ b: Vector<S>) -> S {
+        return abs((self +* b) •* b)
+    }
 }

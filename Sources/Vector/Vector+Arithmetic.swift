@@ -52,8 +52,8 @@ extension Vector: AdditiveArithmetic {
     ///   - lhs: The first vector to add.
     ///   - rhs: The second vector to add.
     /// - Returns: The sum of two vectors, `lhs` and `rhs`
-    public static func +(lhs: Vector<Scalar>, rhs: Vector<Scalar>) -> Vector<Scalar> {
-        var result: Vector = Vector<Scalar>()
+    public static func +(lhs: Vector<S>, rhs: Vector<S>) -> Vector<S> {
+        var result: Vector = Vector<S>()
         
         for i in 0..<max(lhs.dimensions, rhs.dimensions) {
             print(lhs[i], rhs[i])
@@ -70,7 +70,7 @@ extension Vector: AdditiveArithmetic {
     /// - Parameters:
     ///   - lhs: The first vector to add and store sum.
     ///   - rhs: The second vector to add.
-    public static func +=(lhs: inout Vector<Scalar>, rhs: Vector<Scalar>) {
+    public static func +=(lhs: inout Vector<S>, rhs: Vector<S>) {
         lhs = lhs + rhs
     }
     
@@ -84,8 +84,8 @@ extension Vector: AdditiveArithmetic {
     /// - Parameters:
     ///   - lhs: A vector.
     ///   - rhs: The vector to subtract from `lhs`.
-    public static func -(lhs: Vector<Scalar>, rhs: Vector<Scalar>) -> Vector<Scalar> {
-        var result: Vector = Vector<Scalar>()
+    public static func -(lhs: Vector<S>, rhs: Vector<S>) -> Vector<S> {
+        var result: Vector = Vector<S>()
         
         for i in 0..<max(lhs.dimensions, rhs.dimensions) {
             result[i] = lhs[i] - rhs[i]
@@ -99,14 +99,14 @@ extension Vector: AdditiveArithmetic {
     /// - Parameters:
     ///   - lhs: A vector and store subtraction.
     ///   - rhs: The vector to subtract from `lhs`.
-    public static func -=(lhs: inout Vector<Scalar>, rhs: Vector<Scalar>) {
+    public static func -=(lhs: inout Vector<S>, rhs: Vector<S>) {
         lhs = lhs - rhs
     }
 }
 
 extension Vector {
     //MARK: - Multiplication
-    public func scale(by scalar: Scalar) -> Vector<Scalar> {
+    public func scale(by scalar: S) -> Vector<S> {
         return self * scalar
     }
     
@@ -119,8 +119,8 @@ extension Vector {
     /// - Parameters:
     ///   - lhs: The vector to multiply.
     ///   - rhs: The scalar to multiply.
-    public static func *(lhs: Vector<Scalar>, rhs: Scalar) -> Vector<Scalar> {
-        var result: Vector = Vector<Scalar>()
+    public static func *(lhs: Vector<S>, rhs: S) -> Vector<S> {
+        var result: Vector = Vector<S>()
         
         for i in 0..<lhs.dimensions {
             result[i] = lhs[i] * rhs
@@ -138,8 +138,8 @@ extension Vector {
     /// - Parameters:
     ///   - lhs: The scalar to multiply.
     ///   - rhs: The vector to multiply.
-    public static func *(lhs: Scalar, rhs: Vector<Scalar>) -> Vector<Scalar> {
-        var result: Vector = Vector<Scalar>()
+    public static func *(lhs: S, rhs: Vector<S>) -> Vector<S> {
+        var result: Vector = Vector<S>()
         
         for i in 0..<rhs.dimensions {
             result[i] = lhs * rhs[i]
@@ -153,7 +153,7 @@ extension Vector {
     /// - Parameters:
     ///   - lhs: The vector multiply.
     ///   - rhs: The scalar to multiply.
-    public static func *=(lhs: inout Vector<Scalar>, rhs: Scalar) {
+    public static func *=(lhs: inout Vector<S>, rhs: S) {
         lhs = lhs * rhs
     }
     
@@ -165,8 +165,8 @@ extension Vector {
     /// - Parameters:
     ///   - lhs: The vector to multiply.
     ///   - rhs: The scalar to multiply.
-    public static func /(lhs: Vector<Scalar>, rhs: Scalar) -> Vector<Scalar> {
-        var result: Vector = Vector<Scalar>()
+    public static func /(lhs: Vector<S>, rhs: S) -> Vector<S> {
+        var result: Vector = Vector<S>()
         
         for i in 0..<lhs.dimensions {
             result[i] = lhs[i] / rhs
@@ -182,8 +182,8 @@ extension Vector {
     /// - Parameters:
     ///   - lhs: The scalar to be divided.
     ///   - rhs: The vector to of which componets are to divide `lhs`.
-    public static func /(lhs: Scalar, rhs: Vector<Scalar>) -> Vector<Scalar> {
-        var result: Vector = Vector<Scalar>()
+    public static func /(lhs: S, rhs: Vector<S>) -> Vector<S> {
+        var result: Vector = Vector<S>()
         
         for i in 0..<rhs.dimensions {
             result[i] = lhs / rhs[i]
@@ -197,7 +197,7 @@ extension Vector {
     /// - Parameters:
     ///   - lhs: The vector to be divided.
     ///   - rhs: The scalar to divide `lhs`.
-    public static func /=(lhs: inout Vector<Scalar>, rhs: Scalar) {
+    public static func /=(lhs: inout Vector<S>, rhs: S) {
         lhs = lhs / rhs
     }
     
@@ -218,8 +218,8 @@ extension Vector {
     /// - Returns a Scalar.
     /// - Note: The Parameters are bilinear and commutaive (order does not matter).
     /// - Note: If returns `zero` then `lhs` and `rhs` are orthogonal.
-    public static func •*(lhs: Vector<Scalar>, rhs: Vector<Scalar>) -> Scalar {
-        var sum: Scalar = 0
+    public static func •*(lhs: Vector<S>, rhs: Vector<S>) -> S {
+        var sum: S = 0
         
         //We can just look at the minimum of dimensions since any dimensions greater than the minimun whould be zero.
         //<1, 2> •* <3, 4, 5> = (1 * 3) + (2 * 4) + (0 * 5) = 3 + 8 + 0 = 11
@@ -253,11 +253,11 @@ extension Vector {
     /// - Returns: A vector that is orthogonal to both`lhs` and `rhs`. With the magnitude being the Area of the parallelogram created by the vectors `lhs` and `rhs`.
     /// - Note: The parameters are bilinear and anit-communative (order matters) `a +* b = -(b +* a)`
     /// - Note: If returns `zero` then `lhs` and `rhs` are parallel.
-    public static func +*(lhs: Vector<Scalar>, rhs: Vector<Scalar>) -> Vector<Scalar> {
+    public static func +*(lhs: Vector<S>, rhs: Vector<S>) -> Vector<S> {
         //TODO: Vecotr Cross Pruduct in different dimensions
         assert(lhs.compactDimensions <= 3 && rhs.compactDimensions <= 3, "To do a cross product, both vectors must be 3D or 2D")
         
-        var result: Vector = Vector<Scalar>()
+        var result: Vector = Vector<S>()
         
         result.x = (lhs.y * rhs.z) - (lhs.z * rhs.y)
         result.y = (lhs.z * rhs.x) - (lhs.x * rhs.z)

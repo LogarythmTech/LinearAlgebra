@@ -8,9 +8,9 @@
 // See https://github.com/Logarithm-1/LinearAlgebra/blob/main/LICENSE for license information
 
 extension Vector: ExpressibleByArrayLiteral {
-    public typealias ArrayLiteralElement = Scalar
+    public typealias ArrayLiteralElement = S
     
-    public init(arrayLiteral elements: Scalar...) {
+    public init(arrayLiteral elements: S...) {
         self.init(elements)
     }
 }
