@@ -122,37 +122,13 @@ extension Vector {
             case .Cartesian:
                 self[dimension] = newCoordinate
             case .PolarCylindrical:
-                if(dimension >= 2) {
-                    self[dimension] = newCoordinate
-                    return
-                }
-                
-                guard dimensions >= 2 else {
-                    //dimensions == 1
-                    self[0] = newCoordinate
-                    return
-                }
-                
-                //r = self[0]
-                //θ = self[1]
-                if(dimension == 0) { //Changing x
-                    let y: S = self[0] * self[1].sin()
-                    let newR: S = ((newCoordinate*newCoordinate) + (y*y)).squareRoot()
-                    let newT: S = (y / newCoordinate).asin()
-                    self[0] = newR
-                    self[1] = newT
-                    return
-                }
-                
-                //Changing x
-                let x: S = self[0] * self[1].cos()
-                let newR: S = ((x*x) + (newCoordinate*newCoordinate)).squareRoot()
-                let newT: S = (newCoordinate / x).asin()
-                self[0] = newR
-                self[1] = newT
-                return
-            default:
-                return
+                var cartesianV: Vector = self.cartesianVector
+                cartesianV[cartesian: dimension] = newCoordinate
+                self = cartesianV.cylindricalVector
+            case .PolarSpherical:
+                var cartesianV: Vector = self.cartesianVector
+                cartesianV[cartesian: dimension] = newCoordinate
+                self = cartesianV.sphericalVector
             }
         }
     }
@@ -175,39 +151,31 @@ extension Vector {
     
     /// `{get set}` the `x` component (or the first element) in the `Vector`.
     public var x: S {
-        get {
-            switch coordinateSystem {
-            case .Cartesian:
-                return self[0]
-            case .PolarCylindrical:
-                //return r cos θ
-                return self[0] * /*cos*/(self[1]).cos()
-            case .PolarSpherical:
-                //self[0] = r
-                //self[1] = theta
-                return self[0]
-            }
-        } set(newValue) {
-            switch coordinateSystem {
-            case .Cartesian:
-                self[0] = newValue
-            case .PolarCylindrical:
-                precondition(newValue <= self[0], "New x value must be able to lie on the circle of radius r (self[0]).")
-                //Assuming we want the same magnitude
-                //x = r cos θ
-                //x / r = cos θ
-                //θ = arc cos(x / r)
-                self[1] = /*acos*/(newValue / self[0])
-            case .PolarSpherical:
-                //TODO: Set PolarSpherical
-                self[0] = newValue
-            }
-        }
+        get { return self[cartesian: 0] } set(newValue) { self[cartesian: 0] = newValue }
+    }
+    
+    /// `{get set}` the `y` component (or the first element) in the `Vector`.
+    public var y: S {
+        get { return self[cartesian: 1] } set(newValue) { self[cartesian: 1] = newValue }
+    }
+    
+    /// `{get set}` the `z` component (or the first element) in the `Vector`.
+    public var z: S {
+        get { return self[cartesian: 2] } set(newValue) { self[cartesian: 2] = newValue }
+    }
+    
+    /// `{get set}` the `w` component (or the first element) in the `Vector`.
+    public var w: S {
+        get { return self[cartesian: 3] } set(newValue) { self[cartesian: 3] = newValue }
     }
 }
 
 //MARK: - Polar (Spherical)
 extension Vector {
+    public var sphericalVector: Vector<S> {
+        return self
+    }
+    
     public var radiusSpherical: S {
         get {
             return magnitude
@@ -236,6 +204,9 @@ extension Vector {
     //TODO: r
     //TODO: theta
     //TODO: z
+    public var cylindricalVector: Vector<S> {
+        return self
+    }
     
     public init(radius r: S, theta: S, z: S) {
         self.init([r, theta, z], corrdinateSystem: .PolarCylindrical)

@@ -166,32 +166,6 @@ extension Vector {
     public subscript(indices: PartialRangeFrom<Int>) -> Vector<S> {
         get { return self[indices.lowerBound..<dimensions] } set(newValue) { self[indices.lowerBound..<dimensions] = newValue }
     }
-    /// `{get set}` the  `y` component (or the second element) in the `Vector`.
-    public var y: S {
-        get {
-            return self[1]
-        } set(newValue) {
-            self[1] = newValue
-        }
-    }
-    
-    /// `{get set}` the  `Z` component (or the third element) in the `Vector`.
-    public var z: S {
-        get {
-            return self[2]
-        } set(newValue) {
-            self[2] = newValue
-        }
-    }
-    
-    /// `{get set}` the `w` component (or the fourth element) in the `Vector`.
-    public var w: S {
-        get {
-            return self[3]
-        } set(newValue) {
-            self[3] = newValue
-        }
-    }
     
     /// `{get set}` The θ angle from the  (`x`, `z`) plane to the `y` axis.
     public var theta: S {
