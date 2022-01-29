@@ -271,10 +271,6 @@ extension Vector {
         get { return phi } set { phi = newValue }
     }
     
-    //TODO: r
-    //TODO: Theta
-    //TODO: Phi
-    
     //theta can go from (0-360) and phi+ can go form (0-90)
     public init(radius r: S, theta: S, phi: S = 0) {
         self.init([r, theta, phi], corrdinateSystem: .PolarSpherical)
@@ -288,11 +284,100 @@ extension Vector {
 
 //MARK: - Polar (Cylindrical)
 extension Vector {
-    //TODO: r
-    //TODO: theta
-    //TODO: z
+    public subscript(cylindrical dimension: Int) -> S {
+        get {
+            precondition(dimension >= 0, "Dimension must be positive.")
+            guard dimension < dimensions else {
+                return 0
+            }
+            
+            switch coordinateSystem {
+            case .PolarCylindrical:
+                return self[dimension]
+            case .Cartesian:
+                if(dimension >= 2) {
+                    return self[dimension]
+                }
+                
+                let x: S = self[0]
+                let y: S = self[1]
+                
+                if(dimension == 0) {
+                    //We want r = √(x^2 + y^2)
+                    return (x*x + y*y).squareRoot()
+                }
+                
+                //We want θ = asin(y/x)
+                return (y/x).asin()
+            case .PolarSpherical:
+                if(dimension == 1) {
+                    //We want θ
+                    return self[dimension]
+                }
+                
+                if(dimensions == 2 && dimension == 0) {
+                    //We have two dimensions <r, θ>
+                    //and we want r
+                    return self[dimension]
+                }
+                
+                var trig: S = self[0] //r
+                
+                //dimension == 0, start at 2
+                //dimension == 2, start at 3
+                //dimension == 3, start at 4
+                let startDimension = (dimension == 0 ? 2 : dimension + 1)
+                if(startDimension < dimensions) {
+                    for angle in (startDimension + 1)..<dimensions {
+                        trig *= self[angle].sin()
+                    }
+                }
+                
+                if(dimension == 0) {
+                    //We want r
+                } else {
+                    trig *= self[dimension].cos()
+                }
+                
+                return trig
+            }
+        } set(newCoordinate) {
+            precondition(dimension >= 0, "Dimension must be positive.")
+            
+            switch coordinateSystem {
+            case .PolarCylindrical:
+                self[dimension] = newCoordinate
+            case .PolarSpherical:
+                var polar: Vector = self.cylindricalVector
+                polar[dimension] = newCoordinate
+                self = polar.sphericalVector
+            case .Cartesian:
+                var polar: Vector = self.cylindricalVector
+                polar[dimension] = newCoordinate
+                self = polar.cartesianVector
+            }
+        }
+    }
+    
+    /// `{get}` The vector in Cylindrical Polar Corrdinates.
     public var cylindricalVector: Vector<S> {
-        return self
+        switch coordinateSystem {
+        case .PolarCylindrical:
+            return self
+        default:
+            var v: Vector = Vector<S>([0], corrdinateSystem: .PolarCylindrical)
+            
+            for i in 0..<dimensions {
+                v[i] = self[cylindrical: i]
+            }
+            
+            return v
+        }
+    }
+    
+    /// `{get set}` The `radius r` component of the `Vector` in cylindrical corrdinates.
+    public var cylindricalRadius: S {
+        get { return self[cylindrical: 0] } set { self[cylindrical: 0] = newValue }
     }
     
     public init(radius r: S, theta: S, z: S) {

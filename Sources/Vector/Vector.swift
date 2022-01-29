@@ -94,6 +94,28 @@ extension Vector {
         return sum
     }
     
+    /// `{get set}` The magnitude of the vector
+    ///
+    ///     ⟨1, 2, 3⟩.magnitudeSquared = (1^2 + 2^2 + 3^2)
+    ///     ⟨1, 2, 3⟩.magnitude        = √(1^2 + 2^2 + 3^2)
+    ///                                = ⟨1, 2, 3⟩.magnitudeSquared.squareRoot()
+    public var magnitude: S {
+        get {
+            return magnitudeSquared.squareRoot()
+        } set(newValue) {
+            self = unitVector.scale(by: newValue)
+        }
+    }
+    
+    /// `{get set}`  The direction of the vector. Equivalant to the unit vector.
+    public var direction: Vector<S> {
+        get {
+            return unitVector
+        } set(newValue) {
+            self = newValue.unitVector.scale(by: magnitude)
+        }
+    }
+    
     /// A vecotor of same direction as `self` but with a magnitude of `1`.
     public var unitVector: Vector<S> {
         var unit: Vector = Vector<S>()
@@ -165,28 +187,6 @@ extension Vector {
     /// `{get set}` a subset of components in the `Vector`.
     public subscript(indices: PartialRangeFrom<Int>) -> Vector<S> {
         get { return self[indices.lowerBound..<dimensions] } set(newValue) { self[indices.lowerBound..<dimensions] = newValue }
-    }
-    
-    /// `{get set}` The magnitude of the vector
-    ///
-    ///     ⟨1, 2, 3⟩.magnitudeSquared = (1^2 + 2^2 + 3^2)
-    ///     ⟨1, 2, 3⟩.magnitude        = √(1^2 + 2^2 + 3^2)
-    ///                                = ⟨1, 2, 3⟩.magnitudeSquared.squareRoot()
-    public var magnitude: S {
-        get {
-            return magnitudeSquared.squareRoot()
-        } set(newValue) {
-            self = unitVector.scale(by: newValue)
-        }
-    }
-    
-    /// `{get set}`  The direction of the vector. Equivalant to the unit vector.
-    public var direction: Vector<S> {
-        get {
-            return unitVector
-        } set(newValue) {
-            self = newValue.unitVector.scale(by: magnitude)
-        }
     }
 }
 
