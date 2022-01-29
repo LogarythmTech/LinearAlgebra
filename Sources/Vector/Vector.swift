@@ -172,6 +172,10 @@ extension Vector {
     public static var zero: Vector<S> {
         return Vector(dimensions: 2)
     }
+    
+    //TODO: î = [1, 0, 0]
+    //TODO: j^ = [0, 1, 0]
+    //TODO: k^ = [0, 0, 1]
 }
 
 //MARK: - Getters and Setters

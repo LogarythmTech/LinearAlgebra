@@ -119,7 +119,7 @@ extension Vector {
     public func scale(by scalar: S) -> Vector<S> {
         switch coordinateSystem {
         case .Cartesian:
-            var result: Vector = Vector<S>(coordinateSystem: .Cartesian)
+            var result: Vector = self
             
             for i in 0..<dimensions {
                 result[i] *= scalar
@@ -131,7 +131,7 @@ extension Vector {
             result[0] *= scalar
             return result
         case .PolarCylindrical:
-            var result: Vector = Vector<S>(coordinateSystem: .PolarCylindrical)
+            var result: Vector = self
             
             for i in 0..<dimensions {
                 if(i != 1) {

@@ -21,7 +21,7 @@ extension Matrix {
     /// Returns the additive inverse of the specified value.
     ///
     /// - Returns: The additive inverse of the argument.
-    prefix public static func -(operand: Matrix) -> Matrix {
+    public prefix static func -(operand: Matrix) -> Matrix {
         var result = operand
         result.negate()
         return result
@@ -30,7 +30,7 @@ extension Matrix {
     /// Returns the given number unchanged.
     ///
     /// - Returns: The given argument without any changes.
-    prefix public static func +(operand: Matrix) -> Matrix {
+    public prefix static func +(operand: Matrix) -> Matrix {
         return operand
     }
 }
@@ -96,10 +96,51 @@ extension Matrix: AdditiveArithmetic {
 
 extension Matrix {
     //MARK: - Multiplication
+    //MARK: Scalar Multiplication
+    /// Scales a matrix  by scalar (Numeric) and produces their product.
+    ///
+    /// - Parameters:
+    ///   - scalar: The scalar to scale by.
     public func scale(by scalar: Scalar) -> Matrix<Scalar> {
-        return self * scalar
+        var result: Matrix = self
+        
+        for row in 0..<rows {
+            for col in 0..<columns {
+                result[row, col] *= scalar
+            }
+        }
+        
+        return result
+    }
+        
+    /// Multiplies a matrix and a scalar (Numeric) and produces their product.
+    ///
+    /// - Parameters:
+    ///   - lhs: The matrix to multiply.
+    ///   - rhs: The scalar to multiply.
+    public static func *(lhs: Matrix<Scalar>, rhs: Scalar) -> Matrix<Scalar> {
+        return lhs.scale(by: rhs)
     }
     
+    /// Multiplies a matrix and a scalar (Numeric) and produces their product.
+    ///
+    /// - Parameters:
+    ///   - lhs: The matrix to multiply.
+    ///   - rhs: The scalar to multiply.
+    public static func *(lhs: Scalar, rhs: Matrix<Scalar>) -> Matrix<Scalar> {
+        return rhs.scale(by: lhs)
+    }
+    
+    /// Scales a matrix by the multiiplictive inverse of a scalar.
+    ///
+    /// - Parameters:
+    ///   - lhs: The matrix to multiply.
+    ///   - rhs: The scalar to divide by.
+    public static func /(lhs: Matrix<Scalar>, rhs: Scalar) -> Matrix<Scalar> {
+        return lhs.scale(by: 1/rhs)
+    }
+    
+    //MARK: Matrix x Matrix
     /// Multiplies a matrix and a matrix (Numeric)
     ///
     /// - Parameters:
@@ -116,35 +157,16 @@ extension Matrix {
         
         return result
     }
-    
-    /// Multiplies a matrix and a scalar (Numeric) and produces their product.
-    ///
-    /// - Parameters:
-    ///   - lhs: The matrix to multiply.
-    ///   - rhs: The scalar to multiply.
-    public static func *(lhs: Matrix<Scalar>, rhs: Scalar) -> Matrix<Scalar> {
+}
+
+//MARK: - Trasposition
+extension Matrix {
+    public func traspose() -> Matrix<Scalar> {
         var result: Matrix = Matrix<Scalar>()
         
-        for row in 0..<lhs.rows {
-            for col in 0..<lhs.columns {
-                result[row, col] = lhs[row, col] * rhs
-            }
-        }
-        
-        return result
-    }
-    
-    /// Multiplies a matrix and a scalar (Numeric) and produces their product.
-    ///
-    /// - Parameters:
-    ///   - lhs: The matrix to multiply.
-    ///   - rhs: The scalar to multiply.
-    public static func *(lhs: Scalar, rhs: Matrix<Scalar>) -> Matrix<Scalar> {
-        var result: Matrix = Matrix<Scalar>()
-        
-        for row in 0..<rhs.rows {
-            for col in 0..<rhs.columns {
-                result[row, col] = lhs * rhs[row, col]
+        for row in 0..<rows {
+            for col in 0..<columns {
+                result[col, row] = self[row, col]
             }
         }
         
