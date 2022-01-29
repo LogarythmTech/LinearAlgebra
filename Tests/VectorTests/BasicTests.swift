@@ -24,8 +24,6 @@ final class BasicTests: XCTestCase {
         XCTAssertTrue(s[cartesian: 1].isApproximatelyEqual(to: 3.516395981))
         XCTAssertTrue(s[cartesian: 2].isApproximatelyEqual(to: 3.55456769))
         
-        print(s[cartesian: 0], s[cartesian: 1])
-        
         let c: Vector = Vector(radius: 5, θ: 1.57, z: 7)
         XCTAssertTrue(c[cartesian: 0].isApproximatelyEqual(to: 0.003981633554))
         XCTAssertTrue(c[cartesian: 1].isApproximatelyEqual(to: 4.999998415))

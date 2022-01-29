@@ -32,32 +32,45 @@ extension Vector {
     }
     
     /// `{get set}` a cartesian components in the `Vector` where `0` is the first dimension.
-    public subscript(cartesian index: Int) -> S {
-        if(index >= dimensions) {
+    public subscript(cartesian dimension: Int) -> S {
+        precondition(dimension >= 0, "Dimension must be positive.")
+        guard dimension < dimensions else {
             return 0
         }
         
         //index is in components
         switch coordinateSystem {
         case .Cartesian:
-            return index < dimensions ? components[index] : 0
+            return components[dimension]
         case .PolarCylindrical:
             //Since after the first two dimensions (`r` and `θ`) Cylindrical Polar is the same as Cartesian (`z`, `w`,...) we can just return the component at index
-            if(index >= 2) {
-                return index < dimensions ? components[index] : 0
+            if(dimension >= 2) {
+                return components[dimension]
+            }
+            
+            guard dimensions >= 2 else {
+                //dimensions == 1
+                return components[0]
             }
             
             //r = components[0]
             //θ = components[1]
-            //TODO: Trig Functions
-            let trig: S = index == 0 ? (1 < dimensions ? components[1] : 0).cos() : (1 < dimensions ? components[1] : 0).sin()
-            return (0 < dimensions ? components[0] : 0) * trig
+            if(dimension == 0) {//getting x
+                return components[0] * components[1].cos()
+            } else { //getting y
+                return components[0] * components[1].sin()
+            }
         case .PolarSpherical:
             //r = components[0]
             //θ = components[1]
             //𝛗 = components[2]
-            var trig: S = (0 < dimensions ? components[0] : 0)
+            guard dimensions >= 2 else {
+                return components[0]
+            }
             
+            var trig: S = components[0]
+            
+            //Small Check to improve iffeciency
             if(trig == 0) {
                 return 0
             }
@@ -72,17 +85,18 @@ extension Vector {
              dₙ₋₁ = r sin(𝛗ₙ₋₂)cos(𝛗ₙ₋₃)
              dₙ  = r cos(𝛗ₙ₋₂)
              */
-            if(index == 0) {
-                trig *= (1 < dimensions ? components[1] : 0).cos() //θ
-            } else if(index == 1) {
-                trig *= (1 < dimensions ? components[1] : 0).sin() //θ
+            if(dimension == 0) {
+                trig *= components[1].cos()
+            } else if(dimension == 1) {
+                trig *= components[1].sin() //θ
             } else {
                 // index == 0: cos(θ)
                 // index == 2: cos(𝛗ₙ₋₂)
                 // index == 3: cos(𝛗ₙ₋₃)
-                trig *= (index < dimensions ? components[index] : 0).cos()
+                trig *= components[dimension].cos()
             }
             
+            //Small Check to improve iffeciency
             if(trig == 0) {
                 return 0
             }
@@ -91,13 +105,12 @@ extension Vector {
             //For index 1: start = 2
             //For index 2: start = 3
             //For index 3: start = 4
-            let startIndex = (index == 0 ? 2 : index + 1)
+            let startIndex = (dimension == 0 ? 2 : dimension + 1)
             if(startIndex < dimensions) {
                 for angle in startIndex..<dimensions {
-                    trig *= /*sin*/(angle < dimensions ? components[angle] : 0).sin()
+                    trig *= components[angle].sin()
                 }
             }
-            
             
             return trig
         }
