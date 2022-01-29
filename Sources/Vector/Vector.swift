@@ -96,7 +96,7 @@ extension Vector {
     
     /// A vecotor of same direction as `self` but with a magnitude of `1`.
     public var unitVector: Vector<S> {
-        var unit: Vector<S> = [0]
+        var unit: Vector = Vector<S>()
         
         for i in 0..<dimensions {
             unit[i] = self[i] / magnitude

@@ -33,86 +33,127 @@ extension Vector {
     
     /// `{get set}` a cartesian components in the `Vector` where `0` is the first dimension.
     public subscript(cartesian dimension: Int) -> S {
-        precondition(dimension >= 0, "Dimension must be positive.")
-        guard dimension < dimensions else {
-            return 0
-        }
-        
-        //index is in components
-        switch coordinateSystem {
-        case .Cartesian:
-            return components[dimension]
-        case .PolarCylindrical:
-            //Since after the first two dimensions (`r` and `θ`) Cylindrical Polar is the same as Cartesian (`z`, `w`,...) we can just return the component at index
-            if(dimension >= 2) {
-                return components[dimension]
-            }
-            
-            guard dimensions >= 2 else {
-                //dimensions == 1
-                return components[0]
-            }
-            
-            //r = components[0]
-            //θ = components[1]
-            if(dimension == 0) {//getting x
-                return components[0] * components[1].cos()
-            } else { //getting y
-                return components[0] * components[1].sin()
-            }
-        case .PolarSpherical:
-            //r = components[0]
-            //θ = components[1]
-            //𝛗 = components[2]
-            guard dimensions >= 2 else {
-                return components[0]
-            }
-            
-            var trig: S = components[0]
-            
-            //Small Check to improve iffeciency
-            if(trig == 0) {
+        get {
+            precondition(dimension >= 0, "Dimension must be positive.")
+            guard dimension < dimensions else {
                 return 0
             }
             
-            /*
-             For n dimensions, components = [r, θ, 𝛗₁, 𝛗₂,...,𝛗ₙ₋₃, 𝛗ₙ₋₂]
-              x = r sin(𝛗ₙ₋₂)sin(𝝋ₙ₋₃)...sin(𝛗₁)sin(θ)
-              y = r sin(𝛗ₙ₋₂)sin(𝝋ₙ₋₃)...sin(𝛗₁)cos(θ)
-              z = r sin(𝛗ₙ₋₂)sin(𝝋ₙ₋₃)...sin(𝛗₂)cos(𝝋₁)
-              w = r sin(𝛗ₙ₋₂)sin(𝝋ₙ₋₃)...sin(𝛗₃)cos(𝛗₂)
-             ⋮ ⋮ = ⋮ ⋮
-             dₙ₋₁ = r sin(𝛗ₙ₋₂)cos(𝛗ₙ₋₃)
-             dₙ  = r cos(𝛗ₙ₋₂)
-             */
-            if(dimension == 0) {
-                trig *= components[1].cos()
-            } else if(dimension == 1) {
-                trig *= components[1].sin() //θ
-            } else {
-                // index == 0: cos(θ)
-                // index == 2: cos(𝛗ₙ₋₂)
-                // index == 3: cos(𝛗ₙ₋₃)
-                trig *= components[dimension].cos()
-            }
-            
-            //Small Check to improve iffeciency
-            if(trig == 0) {
-                return 0
-            }
-            
-            //For index 0: start = 2
-            //For index 1: start = 2
-            //For index 2: start = 3
-            //For index 3: start = 4
-            let startIndex = (dimension == 0 ? 2 : dimension + 1)
-            if(startIndex < dimensions) {
-                for angle in startIndex..<dimensions {
-                    trig *= components[angle].sin()
+            //index is in components
+            switch coordinateSystem {
+            case .Cartesian:
+                return self[dimension]
+            case .PolarCylindrical:
+                //Since after the first two dimensions (`r` and `θ`) Cylindrical Polar is the same as Cartesian (`z`, `w`,...) we can just return the component at index
+                if(dimension >= 2) {
+                    return self[dimension]
                 }
+                
+                guard dimensions >= 2 else {
+                    //dimensions == 1
+                    return self[0]
+                }
+                
+                //r = components[0]
+                //θ = components[1]
+                if(dimension == 0) {//getting x
+                    return self[0] * self[1].cos()
+                } else { //getting y
+                    return self[0] * self[1].sin()
+                }
+            case .PolarSpherical:
+                //r = components[0]
+                //θ = components[1]
+                //𝛗 = components[2]
+                guard dimensions >= 2 else {
+                    return self[0]
+                }
+                
+                var trig: S = self[0]
+                
+                //Small Check to improve iffeciency
+                if(trig == 0) {
+                    return 0
+                }
+                
+                /*
+                 For n dimensions, components = [r, θ, 𝛗₁, 𝛗₂,...,𝛗ₙ₋₃, 𝛗ₙ₋₂]
+                 x = r sin(𝛗ₙ₋₂)sin(𝝋ₙ₋₃)...sin(𝛗₁)sin(θ)
+                 y = r sin(𝛗ₙ₋₂)sin(𝝋ₙ₋₃)...sin(𝛗₁)cos(θ)
+                 z = r sin(𝛗ₙ₋₂)sin(𝝋ₙ₋₃)...sin(𝛗₂)cos(𝝋₁)
+                 w = r sin(𝛗ₙ₋₂)sin(𝝋ₙ₋₃)...sin(𝛗₃)cos(𝛗₂)
+                 ⋮ ⋮ = ⋮ ⋮
+                 dₙ₋₁ = r sin(𝛗ₙ₋₂)cos(𝛗ₙ₋₃)
+                 dₙ  = r cos(𝛗ₙ₋₂)
+                 */
+                if(dimension == 0) {
+                    trig *= self[1].cos()
+                } else if(dimension == 1) {
+                    trig *= self[1].sin() //θ
+                } else {
+                    // index == 0: cos(θ)
+                    // index == 2: cos(𝛗ₙ₋₂)
+                    // index == 3: cos(𝛗ₙ₋₃)
+                    trig *= self[dimension].cos()
+                }
+                
+                //Small Check to improve iffeciency
+                if(trig == 0) {
+                    return 0
+                }
+                
+                //For index 0: start = 2
+                //For index 1: start = 2
+                //For index 2: start = 3
+                //For index 3: start = 4
+                let startIndex = (dimension == 0 ? 2 : dimension + 1)
+                if(startIndex < dimensions) {
+                    for angle in startIndex..<dimensions {
+                        trig *= self[angle].sin()
+                    }
+                }
+                
+                return trig
             }
+        } set(newCoordinate) {
+            precondition(dimension >= 0, "Dimension has to be positive.")
             
-            return trig
+            switch coordinateSystem {
+            case .Cartesian:
+                self[dimension] = newCoordinate
+            case .PolarCylindrical:
+                if(dimension >= 2) {
+                    self[dimension] = newCoordinate
+                    return
+                }
+                
+                guard dimensions >= 2 else {
+                    //dimensions == 1
+                    self[0] = newCoordinate
+                    return
+                }
+                
+                //r = self[0]
+                //θ = self[1]
+                if(dimension == 0) { //Changing x
+                    let y: S = self[0] * self[1].sin()
+                    let newR: S = ((newCoordinate*newCoordinate) + (y*y)).squareRoot()
+                    let newT: S = (y / newCoordinate).asin()
+                    self[0] = newR
+                    self[1] = newT
+                    return
+                }
+                
+                //Changing x
+                let x: S = self[0] * self[1].cos()
+                let newR: S = ((x*x) + (newCoordinate*newCoordinate)).squareRoot()
+                let newT: S = (newCoordinate / x).asin()
+                self[0] = newR
+                self[1] = newT
+                return
+            default:
+                return
+            }
         }
     }
     
@@ -121,10 +162,14 @@ extension Vector {
         switch coordinateSystem {
         case .Cartesian:
             return self
-        case .PolarSpherical:
-            return self
-        case .PolarCylindrical:
-            return self
+        default:
+            var v: Vector = Vector<S>([0], corrdinateSystem: .Cartesian)
+            
+            for i in 0..<dimensions {
+                v[cartesian: i] = self[cartesian: i]
+            }
+            
+            return v
         }
     }
     
