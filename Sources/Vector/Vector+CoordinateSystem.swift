@@ -22,6 +22,20 @@ extension Vector {
         
         /// Polar Cylindrical. Where it starts with (`r`, `θ`) then goes back to Cartesian starting with (`z`, `w`...)
         case PolarCylindrical
+        
+        //TODO: Other commonoly used coordinate systems?
+        //https://en.wikipedia.org/wiki/Coordinate_system
+    }
+    
+    public func toCoordinateSystem(_ coordinateSystem: CoordinateSystem) -> Vector<S> {
+        switch coordinateSystem {
+        case .Cartesian:
+            return self.cartesianVector
+        case .PolarSpherical:
+            return self.sphericalVector
+        case .PolarCylindrical:
+            return self.cylindricalVector
+        }
     }
 }
 

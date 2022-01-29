@@ -18,7 +18,7 @@ public struct Vector<S: Scalar> {
     public var components: [S]
     
     //TODO: Remove defualt
-    public var coordinateSystem: CoordinateSystem = .Cartesian
+    internal var coordinateSystem: CoordinateSystem = .Cartesian
     
     public init(_ vector: [S], corrdinateSystem: CoordinateSystem = .Cartesian) {
         self.components = vector
@@ -38,6 +38,11 @@ extension Vector {
     public init(dimensions: Int) {
         let vector: [S] = Array(repeating: 0, count: dimensions)
         self.init(vector)
+    }
+    
+    public init(coordinateSystem: CoordinateSystem) {
+        self.components = [0]
+        self.coordinateSystem = coordinateSystem
     }
 }
 
@@ -85,13 +90,29 @@ extension Vector {
     ///     ⟨1, 2, 3⟩.magnitudeSquared = (1^2 + 2^2 + 3^2)
     ///
     public var magnitudeSquared: S {
-        var sum: S = 0
-        
-        for component in components {
-            sum += (component*component) //component^2
+        switch coordinateSystem {
+        case .Cartesian:
+            var sum: S = 0
+            
+            for dimension in 0..<dimensions {
+                sum += (self[dimension]*self[dimension]) //component^2
+            }
+            
+            return sum
+        case .PolarCylindrical:
+            var sum: S = 0
+            
+            for dimension in 0..<dimensions {
+                //since the r component already factors in the first two dimensions, we can skip the 2nd dimension.
+                if(dimension != 1) {
+                    sum += (self[dimension]*self[dimension]) //component^2
+                }
+            }
+            
+            return sum
+        case .PolarSpherical:
+            return self[0]*self[0] //would return the radius of the sphere squared, which equates to the magnitude squared of the vector.
         }
-        
-        return sum
     }
     
     /// `{get set}` The magnitude of the vector
@@ -118,13 +139,32 @@ extension Vector {
     
     /// A vecotor of same direction as `self` but with a magnitude of `1`.
     public var unitVector: Vector<S> {
-        var unit: Vector = Vector<S>()
-        
-        for i in 0..<dimensions {
-            unit[i] = self[i] / magnitude
+        switch coordinateSystem {
+        case .Cartesian:
+            var unit: Vector = Vector<S>(coordinateSystem: .Cartesian)
+            
+            for i in 0..<dimensions {
+                unit[i] = self[i] / magnitude
+            }
+            
+            return unit
+        case .PolarCylindrical:
+            var unit: Vector = Vector<S>(coordinateSystem: .PolarCylindrical)
+            
+            for i in 0..<dimensions {
+                if(i != 1) {
+                    unit[i] = self[i] / magnitude
+                } else {
+                    unit[i] = self[i]
+                }
+            }
+            
+            return unit
+        case .PolarSpherical:
+            var unit: Vector = self
+            unit[0] = 1
+            return unit
         }
-        
-        return Vector(dimensions: 2)
     }
     
     //MARK: Static
