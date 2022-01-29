@@ -72,25 +72,32 @@ extension Vector {
              dₙ₋₁ = r sin(𝛗ₙ₋₂)cos(𝛗ₙ₋₃)
              dₙ  = r cos(𝛗ₙ₋₂)
              */
-            //Geting component for last dimension
             if(index == 0) {
-                return trig * /*sin*/(1 < dimensions ? components[1] : 0).sin() //θ
+                trig *= (1 < dimensions ? components[1] : 0).cos() //θ
+            } else if(index == 1) {
+                trig *= (1 < dimensions ? components[1] : 0).sin() //θ
+            } else {
+                // index == 0: cos(θ)
+                // index == 2: cos(𝛗ₙ₋₂)
+                // index == 3: cos(𝛗ₙ₋₃)
+                trig *= (index < dimensions ? components[index] : 0).cos()
             }
-            
-            // index == 1: cos(θ)
-            // index == 2: cos(𝛗ₙ₋₂)
-            // index == 3: cos(𝛗ₙ₋₃)
-            trig *= /*cos*/ (index < dimensions ? components[index] : 0).cos()
             
             if(trig == 0) {
                 return 0
             }
             
-            if(index + 1 < dimensions) {
-                for angle in (index + 1)..<dimensions {
+            //For index 0: start = 2
+            //For index 1: start = 2
+            //For index 2: start = 3
+            //For index 3: start = 4
+            let startIndex = (index == 0 ? 2 : index + 1)
+            if(startIndex < dimensions) {
+                for angle in startIndex..<dimensions {
                     trig *= /*sin*/(angle < dimensions ? components[angle] : 0).sin()
                 }
             }
+            
             
             return trig
         }
