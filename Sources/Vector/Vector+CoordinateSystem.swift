@@ -123,17 +123,17 @@ extension Vector {
                 self[dimension] = newCoordinate
             case .PolarCylindrical:
                 var cartesianV: Vector = self.cartesianVector
-                cartesianV[cartesian: dimension] = newCoordinate
+                cartesianV[dimension] = newCoordinate
                 self = cartesianV.cylindricalVector
             case .PolarSpherical:
                 var cartesianV: Vector = self.cartesianVector
-                cartesianV[cartesian: dimension] = newCoordinate
+                cartesianV[dimension] = newCoordinate
                 self = cartesianV.sphericalVector
             }
         }
     }
     
-    /// `{get}` the cartesian vector
+    /// `{get}` The Vector in Cartesian Corrdinates.
     public var cartesianVector: Vector<S> {
         switch coordinateSystem {
         case .Cartesian:
@@ -142,46 +142,133 @@ extension Vector {
             var v: Vector = Vector<S>([0], corrdinateSystem: .Cartesian)
             
             for i in 0..<dimensions {
-                v[cartesian: i] = self[cartesian: i]
+                v[i] = self[cartesian: i]
             }
             
             return v
         }
     }
     
-    /// `{get set}` the `x` component (or the first element) in the `Vector`.
+    /// `{get set}` The `x` component of the `Vector` in cartesian corrdinates.
     public var x: S {
-        get { return self[cartesian: 0] } set(newValue) { self[cartesian: 0] = newValue }
+        get { return self[cartesian: 0] } set { self[cartesian: 0] = newValue }
     }
     
-    /// `{get set}` the `y` component (or the first element) in the `Vector`.
+    /// `{get set}` The `y` component of the the `Vector` in cartesian corrdinates.
     public var y: S {
-        get { return self[cartesian: 1] } set(newValue) { self[cartesian: 1] = newValue }
+        get { return self[cartesian: 1] } set { self[cartesian: 1] = newValue }
     }
     
-    /// `{get set}` the `z` component (or the first element) in the `Vector`.
+    /// `{get set}` The `z` component of the `Vector` in cartesian and cylindrical corrdinates.
     public var z: S {
-        get { return self[cartesian: 2] } set(newValue) { self[cartesian: 2] = newValue }
+        get { return self[cartesian: 2] } set { self[cartesian: 2] = newValue }
     }
     
-    /// `{get set}` the `w` component (or the first element) in the `Vector`.
+    /// `{get set}` The `w` component of the `Vector` in cartesian and cylindrical corrdinates.
     public var w: S {
-        get { return self[cartesian: 3] } set(newValue) { self[cartesian: 3] = newValue }
+        get { return self[cartesian: 3] } set { self[cartesian: 3] = newValue }
     }
 }
 
 //MARK: - Polar (Spherical)
 extension Vector {
-    public var sphericalVector: Vector<S> {
-        return self
+    public subscript(spherical dimension: Int) -> S {
+        get {
+            precondition(dimension >= 0, "Dimension must be positive.")
+            guard dimension < dimensions else {
+                return 0
+            }
+            
+            switch coordinateSystem {
+            case .PolarSpherical:
+                return self[dimension]
+            case .Cartesian:
+                if(dimension == 0) {
+                    return magnitude
+                }
+                
+                let endDimension: Int = dimension == 0 ? 2 : dimension + 1
+                var radiusSquared: S = 0
+                for dim in 0..<endDimension {
+                    radiusSquared += self[dim]*self[dim]
+                }
+                
+                let currentRadius: S = radiusSquared.squareRoot()
+                
+                return (self[dimension] / currentRadius).acos()
+            default:
+                if(dimension == 0) {
+                    return magnitude
+                } else if(dimension == 1) {
+                    return self[1]
+                }
+                
+                var radiusSquared: S = self[0]
+                for dim in 2...dimension {
+                    radiusSquared += self[dim]*self[dim]
+                }
+                
+                let currentRadius: S = radiusSquared.squareRoot()
+                
+                return (self[dimension] / currentRadius).acos()
+            }
+        } set(newCoordinate) {
+            precondition(dimension >= 0, "Dimension has to be positive.")
+            
+            switch coordinateSystem {
+            case .PolarSpherical:
+                self[dimension] = newCoordinate
+            case .Cartesian:
+                var polar: Vector = self.sphericalVector
+                polar[dimension] = newCoordinate
+                self = polar.sphericalVector
+            case .PolarCylindrical:
+                var polar: Vector = self.sphericalVector
+                polar[dimension] = newCoordinate
+                self = polar.cylindricalVector
+            }
+        }
     }
     
-    public var radiusSpherical: S {
-        get {
-            return magnitude
-        } set(newValue) {
-            magnitude = newValue
+    /// `{get}` The vector in Spherical Polar Corrdinates.
+    public var sphericalVector: Vector<S> {
+        switch coordinateSystem {
+        case .PolarSpherical:
+            return self
+        default:
+            var v: Vector = Vector<S>([0], corrdinateSystem: .PolarSpherical)
+            
+            for i in 0..<dimensions {
+                v[i] = self[spherical: i]
+            }
+            
+            return v
         }
+    }
+    
+    /// `{get set}` The `radius r` component of the `Vector` in spherical corrdinates.
+    public var sphericalRadius: S {
+        get { return self[spherical: 0] } set { self[spherical: 0] = newValue }
+    }
+    
+    /// `{get set}` The `theta θ` component of the `Vector` in spherical and cylindrical corrdinates.
+    public var theta: S {
+        get { return self[spherical: 1] } set { self[spherical: 1] = newValue }
+    }
+    
+    /// `{get set}` The `theta θ`component of the `Vector` in spherical and cylindrical corrdinates.
+    public var θ: S {
+        get { return theta } set { theta = newValue }
+    }
+    
+    /// `{get set}` The `phi 𝛗`component of the `Vector` in spherical corrdinates.
+    public var phi: S {
+        get { return self[spherical: 2] } set { self[spherical: 2] = newValue }
+    }
+    
+    /// `{get set}` The`phi 𝛗` component of the `Vector` in spherical corrdinates.
+    public var 𝛗: S {
+        get { return phi } set { phi = newValue }
     }
     
     //TODO: r

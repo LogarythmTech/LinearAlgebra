@@ -167,34 +167,6 @@ extension Vector {
         get { return self[indices.lowerBound..<dimensions] } set(newValue) { self[indices.lowerBound..<dimensions] = newValue }
     }
     
-    /// `{get set}` The θ angle from the  (`x`, `z`) plane to the `y` axis.
-    public var theta: S {
-        get {
-            //TODO: Trig Functions
-            return /*atan*/(y / x)
-        } set(newValue) {
-            let xyVector = self[0..<2]
-            self.x = xyVector.magnitude * /*cos*/(newValue)
-            self.y = xyVector.magnitude * /*sin*/(newValue)
-        }
-    }
-    
-    /// `{get set}` The 𝛗 angle from the (`x`, `y`) plane to the `z` axis.
-    public var phi: S {
-        get {
-            let xyVector = self[0..<2]
-            //TODO: Trig Functions
-            return /*atan*/(z / xyVector.magnitude)
-        } set(newValue) {
-            let xyzVector = self[0..<3]
-            let theta: S = theta
-            
-            self.x = xyzVector.magnitude * /*cos*/(newValue) * /*cos*/(theta)
-            self.y = xyzVector.magnitude * /*cos*/(newValue) * /*sin*/(theta)
-            self.z = xyzVector.magnitude * /*sin*/(newValue)
-        }
-    }
-    
     /// `{get set}` The magnitude of the vector
     ///
     ///     ⟨1, 2, 3⟩.magnitudeSquared = (1^2 + 2^2 + 3^2)
