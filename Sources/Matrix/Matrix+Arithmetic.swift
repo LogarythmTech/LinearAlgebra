@@ -43,11 +43,13 @@ extension Matrix: AdditiveArithmetic {
     ///   - lhs: The first matrix to add.
     ///   - rhs: The second matrix to add.
     /// - Returns: The sum of two matrix, `lhs` and `rhs`
+    /// - Precondition: `lhs.rows == rhs.rows && lhs.columns == rhs.clolumns`
     public static func +(lhs: Matrix<Scalar>, rhs: Matrix<Scalar>) -> Matrix<Scalar> {
+        precondition(lhs.rows == rhs.rows && lhs.columns == rhs.columns, "The left and right matrices must be the same size.")
         var result: Matrix = Matrix<Scalar>()
         
-        for row in 0..<max(lhs.rows, rhs.rows) {
-            for col in 0..<max(lhs.columns, rhs.columns) {
+        for row in 0..<lhs.rows {
+            for col in 0..<lhs.columns {
                 result[row, col] = lhs[row, col] + rhs[row, col]
             }
         }
@@ -73,15 +75,7 @@ extension Matrix: AdditiveArithmetic {
     ///   - lhs: A vector.
     ///   - rhs: The vector to subtract from `lhs`.
     public static func -(lhs: Matrix<Scalar>, rhs: Matrix<Scalar>) -> Matrix<Scalar> {
-        var result: Matrix = Matrix<Scalar>()
-        
-        for row in 0..<max(lhs.rows, rhs.rows) {
-            for col in 0..<max(lhs.columns, rhs.columns) {
-                result[row, col] = lhs[row, col] - rhs[row, col]
-            }
-        }
-        
-        return result
+        return lhs + (-rhs)
     }
     
     /// Subtracts the second vector from the first and stores the difference in the left-hand-side variable.
@@ -95,8 +89,7 @@ extension Matrix: AdditiveArithmetic {
 }
 
 extension Matrix {
-    //MARK: - Multiplication
-    //MARK: Scalar Multiplication
+    //MARK: - Scalar Multiplication
     /// Scales a matrix  by scalar (Numeric) and produces their product.
     ///
     /// - Parameters:
@@ -140,18 +133,26 @@ extension Matrix {
         return lhs.scale(by: 1/rhs)
     }
     
-    //MARK: Matrix x Matrix
+    //MARK: Matrix Multiplication
     /// Multiplies a matrix and a matrix (Numeric)
     ///
     /// - Parameters:
     ///   - lhs: The first matrix to multiply.
     ///   - rhs: The second matrix to multiply.
     public static func *(lhs: Matrix<Scalar>, rhs: Matrix<Scalar>) -> Matrix<Scalar> {
+        precondition(lhs.columns == rhs.rows, "lhs must have the same number of columns as rhs has rows.")
+        
         var result: Matrix = Matrix<Scalar>()
         
         for row in 0..<lhs.rows {
             for col in 0..<rhs.columns {
-                result[row, col] = 0
+                var sum: Scalar = 0
+                
+                for i in 0..<lhs.columns {
+                    sum += lhs[row, i] * rhs[i, col]
+                }
+                
+                result[row, col] = sum
             }
         }
         
@@ -159,17 +160,93 @@ extension Matrix {
     }
 }
 
-//MARK: - Trasposition
+//MARK: - Row/Col Operations
 extension Matrix {
-    public func traspose() -> Matrix<Scalar> {
-        var result: Matrix = Matrix<Scalar>()
+    //MARK: Swap
+    public func swap(row: Int, with other: Int) -> Matrix<Scalar> {
+        var result: Matrix = self
+        result[row: row] = self[row: other]
+        result[row: other] = self[row: row]
+        return result
+    }
+    
+    public func swap(col: Int, with other: Int) -> Matrix<Scalar> {
+        var result: Matrix = self
+        result[col: col] = self[col: other]
+        result[col: other] = self[col: col]
+        return result
+    }
+    
+    //MARK: Add
+    public func add(row: Int, with other: Int) -> Matrix<Scalar> {
+        var result: Matrix = self
+        result[row: row] = self[row: row] + self[row: other]
+        return result
+    }
+    
+    public func add(col: Int, with other: Int) -> Matrix<Scalar> {
+        var result: Matrix = self
+        result[col: col] = self[col: col] + self[col: other]
+        return result
+    }
+    
+    //MARK: Subtraction
+    public func subtract(row: Int, with other: Int) -> Matrix<Scalar> {
+        var result: Matrix = self
+        result[row: row] = self[row: row] - self[row: other]
+        return result
+    }
+    
+    public func subtract(col: Int, with other: Int) -> Matrix<Scalar> {
+        var result: Matrix = self
+        result[col: col] = self[col: col] - self[col: other]
+        return result
+    }
+    
+    //MARK: Multiplication
+    public func multiply(row: Int, with other: Int) -> Matrix<Scalar> {
+        var result: Matrix = self
         
-        for row in 0..<rows {
-            for col in 0..<columns {
-                result[col, row] = self[row, col]
-            }
+        for col in 0..<columns {
+            result[row, col] = self[row, col] * self[other, col]
         }
         
         return result
+    }
+    
+    public func multiply(col: Int, with other: Int) -> Matrix<Scalar> {
+        var result: Matrix = self
+        
+        for row in 0..<rows {
+            result[row, col] = self[row, col] * self[row, other]
+        }
+        
+        return result
+    }
+}
+
+//MARK: - Gaussian Elimination
+extension Matrix {
+    //TODO:
+    /// Gaussian Elimination
+    ///
+    ///     ⎡1, 2, 1⎤   ⎡2⎤
+    ///     ⎢2, 6, 1⎥ = ⎢7⎥
+    ///     ⎣1, 1, 4⎦   ⎣3⎦
+    ///
+    ///     ⎡1, 2,  1⎤   ⎡2⎤
+    ///     ⎢0, 2, -1⎥ = ⎢3⎥
+    ///     ⎣1, 1,  4⎦   ⎣3⎦
+    ///
+    ///     ⎡1,  2,  1⎤   ⎡2⎤
+    ///     ⎢0,  2, -1⎥ = ⎢3⎥
+    ///     ⎣0, -1,  3⎦   ⎣3⎦
+    ///
+    ///     ⎡1, 2,  1 ⎤   ⎡ 2 ⎤
+    ///     ⎢0, 2, -1 ⎥ = ⎢ 3 ⎥
+    ///     ⎣0, 0, 5/2⎦   ⎣5/2⎦
+    ///
+    public func gaussianElimination(for matrix: Matrix<Scalar>) -> Matrix<Scalar> {
+        return Matrix<Scalar>()
     }
 }

@@ -9,8 +9,12 @@
 
 extension Matrix: Equatable {
     public static func ==(lhs: Matrix, rhs: Matrix) -> Bool {
-        for row in 0..<max(lhs.rows, rhs.rows) {
-            for col in 0..<max(lhs.columns, rhs.columns) {
+        if(lhs.rows != rhs.rows || lhs.columns != rhs.columns) {
+            return false
+        }
+        
+        for row in 0..<lhs.rows {
+            for col in 0..<lhs.columns {
                 if(lhs[row, col] != rhs[row, col]) {
                     return false
                 }
