@@ -71,7 +71,7 @@ extension Matrix {
         self.init(m: 1, n: row.count)
         
         for i in 0..<row.count {
-            self[1, i] = row[i]
+            self[0, i] = row[i]
         }
     }
     
@@ -80,7 +80,7 @@ extension Matrix {
         self.init(m: col.count, n: 1)
         
         for i in 0..<col.count {
-            self[i, 1] = col[i]
+            self[i, 0] = col[i]
         }
     }
     

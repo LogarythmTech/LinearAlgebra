@@ -53,5 +53,10 @@ final class ArithmeticTests: XCTestCase {
     
     
     
-    
+    func testGaussianElimination() {
+        let m: Matrix = [[1, 2, 1], [2, 6, 1], [1, 1, 4]]
+        let (t, e) = m.gaussianElimination(for: [[2], [7], [3]])
+        XCTAssertEqual(t, [[1, 2, 1], [0, 2, -1], [0, 0, 2.5]])
+        XCTAssertEqual(e, [[2], [3], [2.5]])
+    }
 }

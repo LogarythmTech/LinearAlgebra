@@ -46,7 +46,7 @@ extension Matrix: AdditiveArithmetic {
     /// - Precondition: `lhs.rows == rhs.rows && lhs.columns == rhs.clolumns`
     public static func +(lhs: Matrix<Scalar>, rhs: Matrix<Scalar>) -> Matrix<Scalar> {
         precondition(lhs.rows == rhs.rows && lhs.columns == rhs.columns, "The left and right matrices must be the same size.")
-        var result: Matrix = Matrix<Scalar>()
+        var result: Matrix = Matrix<Scalar>(m: lhs.rows, n: lhs.columns)
         
         for row in 0..<lhs.rows {
             for col in 0..<lhs.columns {
@@ -90,21 +90,6 @@ extension Matrix: AdditiveArithmetic {
 
 extension Matrix {
     //MARK: - Scalar Multiplication
-    /// Scales a matrix  by scalar (Numeric) and produces their product.
-    ///
-    /// - Parameters:
-    ///   - scalar: The scalar to scale by.
-    public func scale(by scalar: Scalar) -> Matrix<Scalar> {
-        var result: Matrix = self
-        
-        for row in 0..<rows {
-            for col in 0..<columns {
-                result[row, col] *= scalar
-            }
-        }
-        
-        return result
-    }
         
     /// Multiplies a matrix and a scalar (Numeric) and produces their product.
     ///
@@ -142,7 +127,7 @@ extension Matrix {
     public static func *(lhs: Matrix<Scalar>, rhs: Matrix<Scalar>) -> Matrix<Scalar> {
         precondition(lhs.columns == rhs.rows, "lhs must have the same number of columns as rhs has rows.")
         
-        var result: Matrix = Matrix<Scalar>()
+        var result: Matrix = Matrix<Scalar>(m: lhs.rows, n: rhs.columns)
         
         for row in 0..<lhs.rows {
             for col in 0..<rhs.columns {
@@ -204,6 +189,26 @@ extension Matrix {
     }
     
     //MARK: Multiplication
+    public func multiply(row: Int, by scalar: Scalar) -> Matrix<Scalar> {
+        var result: Matrix = self
+        
+        for col in 0..<columns {
+            result[row, col] = self[row, col] * scalar
+        }
+        
+        return result
+    }
+    
+    public func multiply(col: Int, by scalar: Scalar) -> Matrix<Scalar> {
+        var result: Matrix = self
+        
+        for row in 0..<rows {
+            result[row, col] = self[row, col] * scalar
+        }
+        
+        return result
+    }
+    
     public func multiply(row: Int, with other: Int) -> Matrix<Scalar> {
         var result: Matrix = self
         
@@ -246,7 +251,30 @@ extension Matrix {
     ///     ⎢0, 2, -1 ⎥ = ⎢ 3 ⎥
     ///     ⎣0, 0, 5/2⎦   ⎣5/2⎦
     ///
-    public func gaussianElimination(for matrix: Matrix<Scalar>) -> Matrix<Scalar> {
-        return Matrix<Scalar>()
+    public func gaussianElimination(for matrix: Matrix<Scalar>) -> (upperTriangle: Matrix<Scalar>, equals: Matrix<Scalar>) {
+        precondition(rows >= columns, "The number of rows (equations) must equal the number of columns (unknown variables)")
+        
+        var triangle: Matrix = self
+        var equals: Matrix = matrix
+        print(triangle)
+        
+        for column in 0..<(columns - 1) {
+            //Tri = (column, coulumn)
+            for row in (column + 1)..<rows {
+                let mult = triangle[row, column] / triangle[column, column]
+                triangle = triangle.multiply(row: column, by: mult)
+                equals = equals.multiply(row: column, by: mult)
+                
+                triangle = triangle.subtract(row: row, with: column)
+                equals = equals.subtract(row: row, with: column)
+                
+                triangle = triangle.multiply(row: column, by: 1/mult)
+                equals = equals.multiply(row: column, by: 1/mult)
+                print(triangle)
+                print(equals)
+            }
+        }
+        
+        return (upperTriangle: triangle, equals: equals)
     }
 }
