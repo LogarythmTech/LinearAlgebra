@@ -461,6 +461,58 @@ extension Matrix {
         get { return self[rows, columns.lowerBound..<self.columns] } set(newValue) { self[rows, columns.lowerBound..<self.columns] = newValue }
     }
     
+    /// `{get set}` a subset of diagonal (left to right) entrices in the matrix.
+    public subscript(diag diag: [Int]) -> [Scalar] {
+        get {
+            var diagonal: [Scalar] = [Scalar]()
+            
+            for i in diag {
+                diagonal.append(self[i, i])
+            }
+            
+            return diagonal
+        } set {
+            precondition(diag.count == newValue.count, "newValue should be the same size as range.")
+            
+            var index: Int = 0
+            for i in diag {
+                self[i, i] = newValue[index]
+                index += 1
+            }
+        }
+    }
+    
+    /// `{get set}` a subset of diagonal (left to right) entrices in the matrix.
+    public subscript(diag diag: Range<Int>) -> [Scalar] {
+        get { return self[diag: Array(diag)] } set { self[diag: Array(diag)] = newValue }
+    }
+    
+    /// `{get set}` a subset of diagonal (left to right) entrices in the matrix.
+    public subscript(diag diag: ClosedRange<Int>) -> [Scalar] {
+        get { return self[diag: Array(diag)] } set { self[diag: Array(diag)] = newValue }
+    }
+    
+    /// `{get set}` a subset of diagonal (left to right) entrices in the matrix.
+    public subscript(diag diag: PartialRangeThrough<Int>) -> [Scalar] {
+        get { return self[diag: 0...diag.upperBound] } set { self[diag: 0...diag.upperBound] = newValue }
+    }
+    
+    /// `{get set}` a subset of diagonal (left to right) entrices in the matrix.
+    public subscript(diag diag: PartialRangeUpTo<Int>) -> [Scalar] {
+        get { return self[diag: 0..<diag.upperBound] } set { self[diag: 0..<diag.upperBound] = newValue }
+    }
+    
+    /// `{get set}` a subset of diagonal (left to right) entrices in the matrix.
+    public subscript(diag diag: PartialRangeFrom<Int>) -> [Scalar] {
+        get { return self[diag: diag.lowerBound..<max(rows, columns)] } set { self[diag: diag.lowerBound..<max(rows, columns)] = newValue }
+    }
+    
+    public var diagnal: [Scalar] {
+        get { return self[diag: 0...] } set { self[diag: 0...] = newValue }
+    }
+    
+    
+    
     internal mutating func addRow() {
         let newRow: [Scalar] = Array(repeating: 0, count: columns)
         components.append(newRow)

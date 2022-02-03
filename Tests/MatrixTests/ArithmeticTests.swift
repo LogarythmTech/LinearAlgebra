@@ -52,11 +52,24 @@ final class ArithmeticTests: XCTestCase {
     }
     
     
+    func testGaussianElimination(m1: [[Double]], m2: [[Double]], e1: [[Double]], e2: [[Double]]) {
+        let (t, e) = Matrix(m1).gaussianElimination(for: Matrix(m2))
+        XCTAssertEqual(t, Matrix(e1))
+        XCTAssertEqual(e, Matrix(e2))
+    }
     
     func testGaussianElimination() {
-        let m: Matrix = [[1, 2, 1], [2, 6, 1], [1, 1, 4]]
-        let (t, e) = m.gaussianElimination(for: [[2], [7], [3]])
-        XCTAssertEqual(t, [[1, 2, 1], [0, 2, -1], [0, 0, 2.5]])
-        XCTAssertEqual(e, [[2], [3], [2.5]])
+        testGaussianElimination(m1: [[1, 2, 1], [2, 6, 1], [1, 1, 4]],
+                                m2: [[2], [7], [3]],
+                                e1: [[1, 2, 1], [0, 2, -1], [0, 0, 2.5]],
+                                e2: [[2], [3], [2.5]])
+        testGaussianElimination(m1: [[1, -1], [1, 2]],
+                                m2: [[7], [3]],
+                                e1: [[1, -1], [0, 3]],
+                                e2: [[7], [-4]])
+        testGaussianElimination(m1: [[6, 1], [3, -2]],
+                                m2: [[5], [5]],
+                                e1: [[6, 1], [0, -2.5]],
+                                e2: [[5], [2.5]])
     }
 }

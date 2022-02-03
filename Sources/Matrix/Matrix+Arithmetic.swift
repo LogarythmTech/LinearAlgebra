@@ -256,7 +256,6 @@ extension Matrix {
         
         var triangle: Matrix = self
         var equals: Matrix = matrix
-        print(triangle)
         
         for column in 0..<(columns - 1) {
             //Tri = (column, coulumn)
@@ -270,8 +269,6 @@ extension Matrix {
                 
                 triangle = triangle.multiply(row: column, by: 1/mult)
                 equals = equals.multiply(row: column, by: 1/mult)
-                print(triangle)
-                print(equals)
             }
         }
         
