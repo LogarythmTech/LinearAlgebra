@@ -12,8 +12,6 @@ let package = Package(
         .library(name: "LinearAlgebra", targets: ["LinearAlgebra"]),
         .library(name: "Matrix", targets: ["Matrix"]),
         .library(name: "Vector", targets: ["Vector"]),
-        
-        
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.

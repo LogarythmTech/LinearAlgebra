@@ -334,8 +334,6 @@ extension Matrix {
         get { return self[diag: 0...] } set { self[diag: 0...] = newValue }
     }
     
-    
-    
     internal mutating func addRow() {
         let newRow: [Scalar] = Array(repeating: 0, count: columns)
         components.append(newRow)
